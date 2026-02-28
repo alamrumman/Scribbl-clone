@@ -8,7 +8,7 @@ function registerRoomEvents(io, socket) {
     socket.join(roomCode);
 
     // 🔥 Prevent duplicate joins
-    const exists = room.players.some((p) => p.socketId === socket.id);
+    const exists = room.players.some((p) => p.username === player.username);
 
     if (exists) return;
 

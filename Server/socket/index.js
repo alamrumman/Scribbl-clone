@@ -4,8 +4,11 @@ const registerRoomEvents = require("./roomEvents");
 function initSocket(server) {
   const io = new Server(server, {
     cors: {
-      origin: ["http://localhost:5173", process.env.FRONTEND_URL],
+      origin: ["http://localhost:5173", process.env.FRONTEND_URL].filter(
+        Boolean,
+      ),
       methods: ["GET", "POST"],
+      credentials: true, // 🔥 MUST BE HERE
     },
   });
 
