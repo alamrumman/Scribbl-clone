@@ -8,7 +8,7 @@ function initSocket(server) {
         Boolean,
       ),
       methods: ["GET", "POST"],
-      credentials: true, // 🔥 MUST BE HERE
+
     },
   });
 
