@@ -44,14 +44,7 @@ function LandingPage() {
           avatarIndex: selectedAvatar,
         }),
       );
-      socket.emit("join-room", {
-        roomCode: data.roomCode,
-        player: {
-          username: name.trim(),
-          avatarIndex: selectedAvatar,
-          role: "host", // optional but recommended
-        },
-      });
+
       navigate(`/room-code?code=${data.roomCode}`);
     } catch (error) {}
   };

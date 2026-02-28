@@ -1,18 +1,19 @@
 import Avatar from "@/Components/Avatar";
-import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import PlayerList from "@/Components/PlayerList";
 import JoinGate from "@/Components/Joingate";
 import { socket } from "@/socket";
-const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
 function Private() {
   const [searchParams] = useSearchParams();
-  const [players, setPlayers] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState("");
   const roomCode = searchParams.get("code");
+
+  const [players, setPlayers] = useState([]);
+  const [status, setStatus] = useState("");
   const [showJoinGate, setShowJoinGate] = useState(false);
+
+  const joinedRef = useRef(false); // 🔥 prevents double join
 
   const inviteLink = `${window.location.origin}/room-code?code=${roomCode}`;
 
@@ -25,10 +26,33 @@ function Private() {
     }
   };
 
+  // 🔥 Connect + Join Room
   useEffect(() => {
     if (!roomCode) return;
 
-    // ✅ Attach listener once
+    socket.connect();
+
+    const savedProfile = JSON.parse(localStorage.getItem(`room-${roomCode}`));
+
+    if (savedProfile && !joinedRef.current) {
+      joinedRef.current = true;
+
+      socket.emit("join-room", {
+        roomCode,
+        player: savedProfile,
+      });
+    } else if (!savedProfile) {
+      setShowJoinGate(true);
+    }
+
+    return () => {
+      socket.disconnect();
+      joinedRef.current = false;
+    };
+  }, [roomCode]);
+
+  // 🔥 Listen for Room Updates
+  useEffect(() => {
     const handleRoomUpdate = (data) => {
       setPlayers(data.players);
       setStatus(data.status);
@@ -41,43 +65,32 @@ function Private() {
     };
   }, []);
 
-  useEffect(() => {
-    if (!roomCode) return;
-
-    const savedProfile = JSON.parse(localStorage.getItem(`room-${roomCode}`));
-
-    if (savedProfile) {
-      socket.emit("join-room", {
-        roomCode,
-        player: savedProfile,
-      });
-    } else {
-      setShowJoinGate(true);
-    }
-  }, [roomCode]);
-
   return (
     <div
       className="min-h-screen"
       style={{ backgroundImage: "url(/Images/main_bg.jpg)" }}
     >
-      <div className="w-full bg-white h-12 flex justify-between">
-        <div className="p-2">Clock</div>
-        <div className="p-2 font-serif font-semibold text-xl animate-pulse">
-          {status}
-        </div>
-        <div className="p-2">{roomCode}</div>
+      {/* Top Bar */}
+      <div className="w-full bg-white h-12 flex justify-between items-center px-4">
+        <div>Clock</div>
+        <div className="font-semibold text-lg animate-pulse">{status}</div>
+        <div>{roomCode}</div>
       </div>
+
+      {/* Join Gate */}
       {showJoinGate && (
         <JoinGate
           roomCode={roomCode}
           onSuccess={() => setShowJoinGate(false)}
         />
       )}
+
+      {/* Settings */}
       <div className="bg-yellow-500 h-56">All settings</div>
 
       <div className="h-40 bg-white">Custom words</div>
 
+      {/* Buttons */}
       <div className="bg-white border my-1 flex gap-1 mx-1">
         <button className="p-2 flex-[7] bg-black text-white">Start</button>
 
@@ -89,6 +102,7 @@ function Private() {
         </button>
       </div>
 
+      {/* Player List + Chat */}
       <div className="flex justify-center h-64">
         <div className="flex-[3]">
           <PlayerList players={players} />
