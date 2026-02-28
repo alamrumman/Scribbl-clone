@@ -18,7 +18,7 @@ function Joingate({ onSuccess }) {
   const [searchParams] = useSearchParams();
   const roomCode = searchParams.get("code");
 
-  const handleJoin = async () => {
+  const handleJoin = () => {
     if (!name.trim()) {
       alert("Enter username");
       return;
@@ -27,60 +27,44 @@ function Joingate({ onSuccess }) {
     if (submittingRef.current) return;
     submittingRef.current = true;
 
-    try {
-      setLoading(true);
-      setShowSpinner(true);
+    setLoading(true);
+    setShowSpinner(true);
 
-      // ✅ 1. REST VALIDATION ONLY
-      const res = await fetch(`${BASE_URL}/api/rooms/random-join`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          roomCode,
-          username: name.trim(),
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.message);
-        setLoading(false);
-        setShowSpinner(false);
-        submittingRef.current = false;
-        return;
-      }
-
-      // ✅ 2. SAVE TO LOCALSTORAGE
-      localStorage.setItem(
-        `room-${roomCode}`,
-        JSON.stringify({
-          username: name.trim(),
-          avatarIndex: selectedAvatar,
-        }),
-      );
-
-      // ✅ 3. EMIT SOCKET JOIN
-      socket.emit("join-room", {
+    socket.emit(
+      "join-room",
+      {
         roomCode,
         player: {
           username: name.trim(),
           avatarIndex: selectedAvatar,
         },
-      });
+      },
+      (response) => {
+        console.log("ACK RECEIVED:", response);
+        if (!response.success) {
+          alert(response.message);
+          setLoading(false);
+          setShowSpinner(false);
+          submittingRef.current = false;
+          return;
+        }
 
-      // ✅ 4. CLOSE OVERLAY (if parent controls it)
-      if (onSuccess) {
-        onSuccess();
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Join failed");
-    } finally {
-      setLoading(false);
-      setShowSpinner(false);
-      submittingRef.current = false;
-    }
+        localStorage.setItem(
+          `room-${roomCode}`,
+          JSON.stringify({
+            username: name.trim(),
+            avatarIndex: selectedAvatar,
+          }),
+        );
+        console.log("Join clicked");
+        console.log("Room code:", roomCode);
+        if (onSuccess) onSuccess();
+
+        setLoading(false);
+        setShowSpinner(false);
+        submittingRef.current = false;
+      },
+    );
   };
 
   return (

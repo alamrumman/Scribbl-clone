@@ -12,9 +12,6 @@ function Private() {
   const [players, setPlayers] = useState([]);
   const [status, setStatus] = useState("");
   const [showJoinGate, setShowJoinGate] = useState(false);
-
-  const joinedRef = useRef(false); // 🔥 prevents double join
-
   const inviteLink = `${window.location.origin}/room-code?code=${roomCode}`;
 
   const handleCopyLink = async () => {
@@ -36,31 +33,11 @@ function Private() {
       setShowJoinGate(true);
       return;
     }
-
-    const joinRoom = () => {
-      if (joinedRef.current) return;
-
-      joinedRef.current = true;
-
-      socket.emit("join-room", {
-        roomCode,
-        player: savedProfile,
-      });
-    };
-
-    socket.connect();
-
-    if (socket.connected) {
-      joinRoom();
-    } else {
-      socket.on("connect", joinRoom);
-    }
-
-    return () => {
-      socket.off("connect", joinRoom);
-      socket.disconnect();
-      joinedRef.current = false;
-    };
+    // ✅ Auto join if already saved
+    socket.emit("join-room", {
+      roomCode,
+      player: savedProfile,
+    });
   }, [roomCode]);
 
   // 🔥 Listen for Room Updates
