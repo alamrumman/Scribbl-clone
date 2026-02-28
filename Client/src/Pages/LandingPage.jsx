@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Spinner from "@/Components/Spinner";
 import { AvatarPicker } from "../Components/Avatar";
 import { socket } from "@/socket";
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 function LandingPage() {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ function LandingPage() {
     setLoading(true);
     setShowSpinner(true);
     try {
-      const res = await fetch("http://localhost:5000/api/rooms/create", {
+      const res = await fetch(`${BASE_URL}/api/rooms/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

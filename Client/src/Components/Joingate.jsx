@@ -6,6 +6,7 @@ import { useRef } from "react";
 import { socket } from "../socket";
 import Spinner from "./Spinner";
 import { AvatarPicker } from "./Avatar";
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 function Joingate({ onSuccess }) {
   const [selectedAvatar, setSelectedAvatar] = useState(0);
@@ -31,7 +32,7 @@ function Joingate({ onSuccess }) {
       setShowSpinner(true);
 
       // ✅ 1. REST VALIDATION ONLY
-      const res = await fetch("http://localhost:5000/api/rooms/random-join", {
+      const res = await fetch(`${BASE_URL}/api/rooms/random-join`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

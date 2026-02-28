@@ -5,7 +5,7 @@ import { useSearchParams } from "react-router-dom";
 import PlayerList from "@/Components/PlayerList";
 import JoinGate from "@/Components/Joingate";
 import { socket } from "@/socket";
-
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 function Private() {
   const [searchParams] = useSearchParams();
   const [players, setPlayers] = useState([]);
