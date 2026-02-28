@@ -30,22 +30,34 @@ function Private() {
   useEffect(() => {
     if (!roomCode) return;
 
-    socket.connect();
-
     const savedProfile = JSON.parse(localStorage.getItem(`room-${roomCode}`));
 
-    if (savedProfile && !joinedRef.current) {
+    if (!savedProfile) {
+      setShowJoinGate(true);
+      return;
+    }
+
+    const joinRoom = () => {
+      if (joinedRef.current) return;
+
       joinedRef.current = true;
 
       socket.emit("join-room", {
         roomCode,
         player: savedProfile,
       });
-    } else if (!savedProfile) {
-      setShowJoinGate(true);
+    };
+
+    socket.connect();
+
+    if (socket.connected) {
+      joinRoom();
+    } else {
+      socket.on("connect", joinRoom);
     }
 
     return () => {
+      socket.off("connect", joinRoom);
       socket.disconnect();
       joinedRef.current = false;
     };
