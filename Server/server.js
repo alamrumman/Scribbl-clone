@@ -29,8 +29,11 @@ app.use(express.json());
 // 🔥 Attach socket layer
 initSocket(server);
 
-app.get("/", (req, res) => {});
+app.get("/", (req, res) => {
+  res.send("Server is running");
+});
 app.use("/api/rooms", roomRoutes);
-server.listen(PORT, () => {
+
+server.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
 });
