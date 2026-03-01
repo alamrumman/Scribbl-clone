@@ -30,17 +30,19 @@ function Joingate({ onSuccess }) {
     setLoading(true);
     setShowSpinner(true);
 
+    const stableId = crypto.randomUUID(); // ✅ generate before emit, no import needed
+
     socket.emit(
       "join-room",
       {
         roomCode,
         player: {
+          id: stableId, // ✅ send to server
           username: name.trim(),
           avatarIndex: selectedAvatar,
         },
       },
       (response) => {
-        console.log("ACK RECEIVED:", response);
         if (!response.success) {
           alert(response.message);
           setLoading(false);
@@ -50,16 +52,16 @@ function Joingate({ onSuccess }) {
         }
 
         localStorage.setItem(
+          // ✅ save same id after confirmed
           `room-${roomCode}`,
           JSON.stringify({
+            id: stableId,
             username: name.trim(),
             avatarIndex: selectedAvatar,
           }),
         );
-        console.log("Join clicked");
-        console.log("Room code:", roomCode);
-        if (onSuccess) onSuccess();
 
+        if (onSuccess) onSuccess();
         setLoading(false);
         setShowSpinner(false);
         submittingRef.current = false;

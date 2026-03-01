@@ -16,6 +16,9 @@ function PlayerList({ players }) {
             <span className="font-bold w-2">{index + 1}.</span>
             <Avatar index={player.avatarIndex} size={52} />
             <span className="font-medium">{player.username}</span>
+            <span className="font-bold text-yellow-600 text-sm">
+              {player.score ?? 0} pts
+            </span>
           </li>
         ))}
       </ol>

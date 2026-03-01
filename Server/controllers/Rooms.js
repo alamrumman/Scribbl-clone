@@ -2,7 +2,7 @@
 const Room = require("../models/RoomSchmea");
 const generateRoomCode = require("../utils/generateRoom");
 const rooms = require("../Memory/roomstore");
-
+const { v4: uuidv4 } = require("uuid");
 exports.createRoom = async (req, res) => {
   try {
     const { username, avatarIndex } = req.body;
@@ -27,14 +27,16 @@ exports.createRoom = async (req, res) => {
       playersCount: 1,
       status: "waiting",
     });
+    const hostId = uuidv4();
 
     rooms.set(roomCode, {
       players: [
         {
-          id: "player-" + Date.now(),
+          id: hostId,
           username: username.trim(),
           avatarIndex: avatarIndex ?? 0,
           role: "host",
+          score: 0,
         },
       ],
       settings: {
@@ -54,6 +56,7 @@ exports.createRoom = async (req, res) => {
     res.status(201).json({
       success: true,
       roomCode,
+      playerId: hostId,
     });
   } catch (error) {
     console.error(error);

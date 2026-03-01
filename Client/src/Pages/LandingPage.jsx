@@ -40,6 +40,7 @@ function LandingPage() {
       localStorage.setItem(
         `room-${data.roomCode}`,
         JSON.stringify({
+          id: data.playerId,
           username: name.trim(),
           avatarIndex: selectedAvatar,
         }),
