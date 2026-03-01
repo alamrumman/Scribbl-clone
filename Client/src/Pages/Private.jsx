@@ -4,10 +4,17 @@ import { useSearchParams } from "react-router-dom";
 import PlayerList from "@/Components/PlayerList";
 import JoinGate from "@/Components/Joingate";
 import { socket } from "@/socket";
+import Settings from "@/Components/Settings";
 
 function Private() {
   const [searchParams] = useSearchParams();
   const roomCode = searchParams.get("code");
+  const [settings, setSettings] = useState({
+    players: 2,
+    drawtime: 50,
+    rounds: 3,
+    wordCount: 3,
+  });
 
   const [players, setPlayers] = useState([]);
   const [status, setStatus] = useState("");
@@ -75,13 +82,24 @@ function Private() {
       )}
 
       {/* Settings */}
-      <div className="bg-yellow-500 h-56">All settings</div>
-
-      <div className="h-40 bg-white">Custom words</div>
+      <div className="bg-yellow-500 h-52">
+        <Settings settings={settings} setSettings={setSettings} />
+      </div>
 
       {/* Buttons */}
       <div className="bg-white border my-1 flex gap-1 mx-1">
-        <button className="p-2 flex-[7] bg-black text-white">Start</button>
+        <button
+          className="p-2 flex-[7] bg-black text-white"
+          onClick={() => {
+            console.log("Starting with settings:", settings);
+            socket.emit("start-game", {
+              roomCode,
+              settings,
+            });
+          }}
+        >
+          Start
+        </button>
 
         <button
           className="p-2 flex-[3] bg-blue-500 text-white"
@@ -92,7 +110,7 @@ function Private() {
       </div>
 
       {/* Player List + Chat */}
-      <div className="flex justify-center h-64">
+      <div className="flex justify-center h-64 gap-1">
         <div className="flex-[3]">
           <PlayerList players={players} />
         </div>

@@ -1,6 +1,7 @@
 const { Server } = require("socket.io");
 const registerRoomEvents = require("./roomEvents");
-
+const registerGameevents = require("./gameEvents");
+const rooms = require("../Memory/roomstore");
 function initSocket(server) {
   const io = new Server(server, {
     cors: {
@@ -8,14 +9,14 @@ function initSocket(server) {
         Boolean,
       ),
       methods: ["GET", "POST"],
-
     },
   });
 
   io.on("connection", (socket) => {
     console.log("Socket connected:", socket.id);
 
-    registerRoomEvents(io, socket);
+    registerRoomEvents(io, socket, rooms);
+    registerGameevents(io, socket, rooms);
   });
 }
 

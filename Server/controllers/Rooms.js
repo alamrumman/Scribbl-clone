@@ -7,6 +7,7 @@ exports.createRoom = async (req, res) => {
   try {
     const { username, avatarIndex } = req.body;
 
+    const word = null;
     if (!username || username.trim().length < 2) {
       return res.status(400).json({
         message: "Valid username required",
@@ -42,6 +43,10 @@ exports.createRoom = async (req, res) => {
       },
       gameState: {},
       status: "waiting",
+      currentRound: 0,
+      currentDrawerId: null,
+      drawerIndex: 0,
+      word: null,
       createdAt: Date.now(),
       lastActivity: Date.now(),
     });
@@ -95,6 +100,10 @@ exports.getRoomState = (req, res) => {
   res.json({
     players: room.players,
     status: room.status,
+    currentRound: room.currentRound,
+    currentDrawerId: room.currentDrawerId,
+    drawerIndex: room.drawerIndex,
+    word: room.word,
     settings: room.settings,
   });
 };
