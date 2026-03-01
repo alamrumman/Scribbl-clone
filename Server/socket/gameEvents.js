@@ -178,7 +178,8 @@ function registerGameevents(io, socket) {
     if (!room) return;
 
     const hostPlayer = room.players.find((p) => p.role === "host");
-    if (!hostPlayer) return;
+    if (!hostPlayer)
+      return res.status(400).json({ message: "Only Host can start the game" });
 
     if (hostPlayer.socketId !== socket.id) {
       console.log("⛔ Not host. Start denied.");

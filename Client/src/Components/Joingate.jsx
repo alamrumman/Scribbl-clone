@@ -6,6 +6,7 @@ import { useRef } from "react";
 import { socket } from "../socket";
 import Spinner from "./Spinner";
 import { AvatarPicker } from "./Avatar";
+import { toast } from "react-toastify";
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 function Joingate({ onSuccess }) {
@@ -20,7 +21,7 @@ function Joingate({ onSuccess }) {
 
   const handleJoin = () => {
     if (!name.trim()) {
-      alert("Enter username");
+      toast.info("Username Required!");
       return;
     }
 
@@ -65,6 +66,7 @@ function Joingate({ onSuccess }) {
         setLoading(false);
         setShowSpinner(false);
         submittingRef.current = false;
+        toast.success(`Welcome to ${roomCode}`);
       },
     );
   };

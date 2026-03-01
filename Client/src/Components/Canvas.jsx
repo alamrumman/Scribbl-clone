@@ -7,11 +7,10 @@ function Canvas({ isDrawer, roomCode }) {
   const lastPos = useRef(null);
   const [color, setColor] = useState("#000000");
   const [brushSize, setBrushSize] = useState(4);
-  const [tool, setTool] = useState("pen"); // pen or eraser
+  const [tool, setTool] = useState("pen");
 
   const getPos = (e, canvas) => {
     const rect = canvas.getBoundingClientRect();
-    // Scale mouse position to canvas actual resolution
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -33,17 +32,13 @@ function Canvas({ isDrawer, roomCode }) {
     ctx.stroke();
   };
 
-  // Listen for remote strokes + clear
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-
     const handleStroke = (stroke) => drawStroke(ctx, stroke);
     const handleClear = () => ctx.clearRect(0, 0, canvas.width, canvas.height);
-
     socket.on("draw-stroke", handleStroke);
     socket.on("clear-canvas", handleClear);
-
     return () => {
       socket.off("draw-stroke", handleStroke);
       socket.off("clear-canvas", handleClear);
@@ -60,11 +55,9 @@ function Canvas({ isDrawer, roomCode }) {
   const draw = (e) => {
     if (!isDrawer || !drawing.current) return;
     e.preventDefault();
-
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     const pos = getPos(e, canvas);
-
     const stroke = {
       x0: lastPos.current.x,
       y0: lastPos.current.y,
@@ -73,10 +66,8 @@ function Canvas({ isDrawer, roomCode }) {
       color: tool === "eraser" ? "#ffffff" : color,
       width: tool === "eraser" ? brushSize * 4 : brushSize,
     };
-
     drawStroke(ctx, stroke);
     socket.emit("draw-stroke", { roomCode, stroke });
-
     lastPos.current = pos;
   };
 
@@ -115,13 +106,19 @@ function Canvas({ isDrawer, roomCode }) {
         ref={canvasRef}
         width={600}
         height={400}
-        className="border-2 border-gray-300 rounded bg-white touch-none w-full max-w-2xl"
         style={{
           cursor: isDrawer
             ? tool === "eraser"
               ? "cell"
               : "crosshair"
             : "default",
+          border: "2px solid #1a1a1a",
+          borderRadius: "8px",
+          boxShadow: "4px 4px 0px #1a1a1a",
+          background: "#fff",
+          touchAction: "none",
+          width: "100%",
+          maxWidth: "672px",
         }}
         onMouseDown={startDrawing}
         onMouseMove={draw}
@@ -132,11 +129,25 @@ function Canvas({ isDrawer, roomCode }) {
         onTouchEnd={stopDrawing}
       />
 
-      {/* Toolbar — only visible to drawer */}
+      {/* Toolbar */}
       {isDrawer && (
-        <div className="flex flex-wrap items-center gap-3 bg-white p-2 rounded border w-full max-w-2xl">
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            gap: "10px",
+            background: "#fffef7",
+            border: "2px solid #1a1a1a",
+            borderRadius: "8px",
+            boxShadow: "3px 3px 0px #1a1a1a",
+            padding: "8px 12px",
+            width: "100%",
+            maxWidth: "672px",
+          }}
+        >
           {/* Color Palette */}
-          <div className="flex flex-wrap gap-1">
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
             {colors.map((c) => (
               <button
                 key={c}
@@ -144,60 +155,102 @@ function Canvas({ isDrawer, roomCode }) {
                   setColor(c);
                   setTool("pen");
                 }}
-                className="w-6 h-6 rounded-full border-2 transition-transform hover:scale-110"
                 style={{
+                  width: "24px",
+                  height: "24px",
+                  borderRadius: "50%",
                   backgroundColor: c,
-                  borderColor:
-                    color === c && tool === "pen" ? "#6366f1" : "#d1d5db",
+                  border:
+                    color === c && tool === "pen"
+                      ? "3px solid #1a1a1a"
+                      : "2px solid #d1d5db",
                   transform:
-                    color === c && tool === "pen" ? "scale(1.2)" : "scale(1)",
+                    color === c && tool === "pen" ? "scale(1.25)" : "scale(1)",
+                  cursor: "pointer",
+                  boxShadow:
+                    color === c && tool === "pen"
+                      ? "2px 2px 0px #1a1a1a"
+                      : "none",
+                  transition: "all 0.1s ease",
                 }}
               />
             ))}
           </div>
 
           {/* Divider */}
-          <div className="w-px h-8 bg-gray-300" />
+          <div
+            style={{ width: "1px", height: "32px", background: "#d1d5db" }}
+          />
 
           {/* Brush Size */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-500">Size</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <span
+              style={{ fontSize: "12px", fontWeight: "700", color: "#1a1a1a" }}
+            >
+              Size
+            </span>
             <input
               type="range"
               min="2"
               max="24"
               value={brushSize}
               onChange={(e) => setBrushSize(Number(e.target.value))}
-              className="w-14"
+              style={{ width: "56px", accentColor: "#1a1a1a" }}
             />
             <div
-              className="rounded-full bg-black"
-              style={{ width: brushSize, height: brushSize }}
+              style={{
+                borderRadius: "50%",
+                background: "#1a1a1a",
+                width: brushSize,
+                height: brushSize,
+              }}
             />
           </div>
 
           {/* Divider */}
-          <div className="w-px h-8 bg-gray-300" />
+          <div
+            style={{ width: "1px", height: "32px", background: "#d1d5db" }}
+          />
 
           {/* Eraser */}
           <button
+            className="btn-press"
             onClick={() => setTool(tool === "eraser" ? "pen" : "eraser")}
-            className={`px-3 py-1 rounded text-sm font-medium border transition-colors ${
-              tool === "eraser"
-                ? "bg-indigo-500 text-white border-indigo-500"
-                : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-            }`}
+            style={{
+              padding: "5px 12px",
+              background: tool === "eraser" ? "#fecdd3" : "#fffef7",
+              border: "2px solid #1a1a1a",
+              borderRadius: "6px",
+              boxShadow: "2px 2px 0px #1a1a1a",
+              fontSize: "13px",
+              fontWeight: "700",
+              color: "#1a1a1a",
+              cursor: "pointer",
+            }}
           >
             🧹 Eraser
           </button>
 
           {/* Divider */}
-          <div className="w-px h-8 bg-gray-300" />
+          <div
+            style={{ width: "1px", height: "32px", background: "#d1d5db" }}
+          />
 
           {/* Clear */}
           <button
+            className="btn-press"
             onClick={clearCanvas}
-            className="px-3 py-1 rounded text-sm font-medium border border-red-300 text-red-600 hover:bg-red-50 transition-colors"
+            style={{
+              padding: "5px 12px",
+              background: "#fef08a",
+              border: "2px solid #1a1a1a",
+              borderRadius: "6px",
+              boxShadow: "2px 2px 0px #1a1a1a",
+              fontSize: "13px",
+              fontWeight: "700",
+              color: "#1a1a1a",
+              cursor: "pointer",
+            }}
           >
             🗑️ Clear
           </button>

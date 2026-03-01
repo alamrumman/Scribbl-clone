@@ -7,9 +7,8 @@ function PlayerList({ players }) {
 
   return (
     <div
-      className="overflow-scroll"
+      className="h-56 max-h-56 overflow-scroll"
       style={{
-        maxHeight: "14rem",
         background: "#fffef7",
         border: "2px solid #1a1a1a",
         borderRadius: "8px",

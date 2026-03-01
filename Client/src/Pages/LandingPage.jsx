@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Spinner from "@/Components/Spinner";
 import { AvatarPicker } from "../Components/Avatar";
 import { socket } from "@/socket";
+import { toast } from "react-toastify";
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 function LandingPage() {
@@ -34,8 +35,14 @@ function LandingPage() {
       });
       const data = await res.json();
       console.log(data);
+      if (!name) {
+        setLoading(false);
+        submittingRef.current = false;
+        setShowSpinner(false);
+        throw new Error("Username required!");
+      }
       if (!data.roomCode) {
-        throw new Error("Room code generation failed check backend");
+        throw new Error("Room code generation failed");
       }
       localStorage.setItem(
         `room-${data.roomCode}`,
@@ -45,9 +52,11 @@ function LandingPage() {
           avatarIndex: selectedAvatar,
         }),
       );
-
+      toast.success("Room generated successfully");
       navigate(`/room-code?code=${data.roomCode}`);
-    } catch (error) {}
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   return (

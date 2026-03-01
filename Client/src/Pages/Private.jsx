@@ -11,6 +11,7 @@ import GameTopBar from "@/Components/GameTopBar";
 import WordSelector from "@/Components/WordSelector";
 import GameChat from "@/Components/GameChat";
 import GameOver from "@/Components/GameOver";
+import { toast } from "react-toastify";
 
 function Private() {
   const [searchParams] = useSearchParams();
@@ -43,9 +44,9 @@ function Private() {
     const link = `${window.location.origin}/room-code?code=${roomCode}`;
     try {
       await navigator.clipboard.writeText(link);
-      alert("Invite link copied!");
+      toast.info("Invite link copied!");
     } catch (err) {
-      console.error(err);
+      toast.error(err.message);
     }
   };
 
@@ -74,7 +75,7 @@ function Private() {
       )}
 
       {status === "waiting" && (
-        <div className="bg-yellow-500 h-52">
+        <div className="p-1">
           <Settings settings={settings} setSettings={setSettings} />
         </div>
       )}
@@ -97,24 +98,79 @@ function Private() {
 
       {/* Start + Copy */}
       {status === "waiting" && (
-        <div className="bg-white border my-1 flex gap-1 mx-1">
+        <div
+          style={{
+            background: "#fffef7",
+            border: "2px solid #1a1a1a",
+            borderRadius: "8px",
+            boxShadow: "3px 3px 0px #1a1a1a",
+            display: "flex",
+            gap: "8px",
+            padding: "8px",
+            margin: "4px",
+          }}
+        >
           <button
-            className="p-2 flex-[7] bg-black text-white"
+            style={{
+              flex: 7,
+              padding: "10px 12px",
+              background: "#84cc16",
+              color: "#1a1a1a",
+              border: "2px solid #1a1a1a",
+              borderRadius: "6px",
+              fontSize: "16px",
+              fontWeight: "700",
+
+              cursor: "pointer",
+              boxShadow: "3px 3px 0px #1a1a1a",
+              letterSpacing: "0.5px",
+              transition: "all 0.1s ease",
+            }}
+            onMouseDown={(e) =>
+              (e.currentTarget.style.cssText +=
+                "transform:translate(2px,2px);box-shadow:1px 1px 0px #1a1a1a")
+            }
+            onMouseUp={(e) =>
+              (e.currentTarget.style.cssText +=
+                "transform:translate(0,0);box-shadow:3px 3px 0px #1a1a1a")
+            }
             onClick={() => socket.emit("start-game", { roomCode, settings })}
           >
-            Start
+            🚀 Start Game
           </button>
           <button
-            className="p-2 flex-[3] bg-blue-500 text-white"
+            style={{
+              flex: 3,
+              padding: "10px 12px",
+              background: "#06b6d4",
+              color: "#1a1a1a",
+              border: "2px solid #1a1a1a",
+              borderRadius: "6px",
+              fontSize: "16px",
+              fontWeight: "700",
+
+              cursor: "pointer",
+              boxShadow: "3px 3px 0px #1a1a1a",
+              letterSpacing: "0.5px",
+              transition: "all 0.1s ease",
+            }}
+            onMouseDown={(e) =>
+              (e.currentTarget.style.cssText +=
+                "transform:translate(2px,2px);box-shadow:1px 1px 0px #1a1a1a")
+            }
+            onMouseUp={(e) =>
+              (e.currentTarget.style.cssText +=
+                "transform:translate(0,0);box-shadow:3px 3px 0px #1a1a1a")
+            }
             onClick={handleCopyLink}
           >
-            Copy Link
+            🔗 Copy
           </button>
         </div>
       )}
 
       {/* Player List + Chat */}
-      <div className="flex justify-center h-64 gap-1 p-1">
+      <div className="flex justify-center gap-1 p-1">
         <div className="flex-[3]">
           <PlayerList players={players} />
         </div>
