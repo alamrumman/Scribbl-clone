@@ -94,9 +94,18 @@ function Canvas({ isDrawer, roomCode }) {
   };
 
   const colors = [
-    "#000000", "#ffffff", "#ef4444", "#f97316",
-    "#eab308", "#22c55e", "#3b82f6", "#8b5cf6",
-    "#ec4899", "#78716c", "#0ea5e9", "#14b8a6",
+    "#000000",
+    "#ffffff",
+    "#ef4444",
+    "#f97316",
+    "#eab308",
+    "#22c55e",
+    "#3b82f6",
+    "#8b5cf6",
+    "#ec4899",
+    "#78716c",
+    "#0ea5e9",
+    "#14b8a6",
   ];
 
   return (
@@ -107,7 +116,13 @@ function Canvas({ isDrawer, roomCode }) {
         width={600}
         height={400}
         className="border-2 border-gray-300 rounded bg-white touch-none w-full max-w-2xl"
-        style={{ cursor: isDrawer ? (tool === "eraser" ? "cell" : "crosshair") : "default" }}
+        style={{
+          cursor: isDrawer
+            ? tool === "eraser"
+              ? "cell"
+              : "crosshair"
+            : "default",
+        }}
         onMouseDown={startDrawing}
         onMouseMove={draw}
         onMouseUp={stopDrawing}
@@ -120,18 +135,22 @@ function Canvas({ isDrawer, roomCode }) {
       {/* Toolbar — only visible to drawer */}
       {isDrawer && (
         <div className="flex flex-wrap items-center gap-3 bg-white p-2 rounded border w-full max-w-2xl">
-          
           {/* Color Palette */}
           <div className="flex flex-wrap gap-1">
             {colors.map((c) => (
               <button
                 key={c}
-                onClick={() => { setColor(c); setTool("pen"); }}
+                onClick={() => {
+                  setColor(c);
+                  setTool("pen");
+                }}
                 className="w-6 h-6 rounded-full border-2 transition-transform hover:scale-110"
                 style={{
                   backgroundColor: c,
-                  borderColor: color === c && tool === "pen" ? "#6366f1" : "#d1d5db",
-                  transform: color === c && tool === "pen" ? "scale(1.2)" : "scale(1)",
+                  borderColor:
+                    color === c && tool === "pen" ? "#6366f1" : "#d1d5db",
+                  transform:
+                    color === c && tool === "pen" ? "scale(1.2)" : "scale(1)",
                 }}
               />
             ))}
@@ -149,7 +168,7 @@ function Canvas({ isDrawer, roomCode }) {
               max="24"
               value={brushSize}
               onChange={(e) => setBrushSize(Number(e.target.value))}
-              className="w-20"
+              className="w-14"
             />
             <div
               className="rounded-full bg-black"
@@ -171,6 +190,9 @@ function Canvas({ isDrawer, roomCode }) {
           >
             🧹 Eraser
           </button>
+
+          {/* Divider */}
+          <div className="w-px h-8 bg-gray-300" />
 
           {/* Clear */}
           <button
