@@ -2,15 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
+.Toastify__toast-container {
+  width: auto !important;
+  min-width: 200px !important;
+  max-width: 420px !important;
+  padding: 0 14px !important;
+}
+
 .Toastify__toast {
+  margin-top: 10px;
   min-height: unset !important;
-  padding: 10px 12px !important;
+  padding: 15px 10px !important;
   font-size: 13px !important;
+  min-width: 280px !important;
+  max-width: 420px !important;
+  width: auto !important;
 }
 
 .Toastify__toast-body {
   padding: 0 !important;
   margin: 0 !important;
+  width: 100% !important;
+  flex: 1 !important;
 }
 
 .Toastify__toast-icon {
@@ -26,8 +39,6 @@
   font-weight: 700 !important;
   color: #1a1a1a !important;
   font-size: 15px !important;
-  width: calc(80vw - 24px) !important;
- 
 }
 
 .Toastify__toast--success {

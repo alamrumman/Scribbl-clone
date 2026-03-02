@@ -73,7 +73,7 @@ function Joingate({ onSuccess }) {
 
   return (
     <div>
-      <div className="fixed inset-0 backdrop-blur-sm bg-opacity-30 flex items-center justify-center z-50 p-4">
+      <div className="fixed inset-0 backdrop-blur-sm bg-opacity-30 flex items-center justify-center z-50 p-1">
         <div className="w-full max-w-sm bg-white rounded-md shadow-2xl overflow-hidden mb-30">
           <div className="bg-white mx-1 rounded min-h-80 ">
             <div className="nameAndlang flex justify-around py-3 gap-0">

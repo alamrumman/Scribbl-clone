@@ -196,6 +196,18 @@ function registerGameevents(io, socket) {
     startDrawingTurn(io, roomCode);
   });
 
+  socket.on("clear-canvas", ({ roomCode }) => {
+  const room = rooms.get(roomCode);
+  if (!room) return;
+
+  // Only drawer can clear
+  const drawer = room.players.find((p) => p.id === room.currentDrawerId);
+  if (drawer?.socketId !== socket.id) return;
+
+  // Broadcast to everyone except drawer (drawer already cleared locally)
+  socket.to(roomCode).emit("clear-canvas");
+});
+
   socket.on("select-word", ({ roomCode, word }) => {
     const room = rooms.get(roomCode);
     if (!room) return;

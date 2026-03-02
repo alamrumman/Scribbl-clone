@@ -107,7 +107,14 @@ function LandingPage() {
             </div>
           </div>
           <div className="flex justify-center">
-            <button className="w-full m-2 p-2 mt-10 text-3xl font-bold border  border-black rounded shadow-lg">
+            <button
+              className="w-full m-2 p-2 mt-10 text-3xl font-bold border  border-black rounded shadow-lg"
+              onClick={() => {
+                toast.info(
+                  "Public match making feature is under build, try creating a private room ",
+                );
+              }}
+            >
               Play!
             </button>
           </div>
