@@ -1,97 +1,207 @@
-# 🎨 Scribbl — Skribbl.io Clone
-Production url - https://scribbl-clone-mnag.onrender.com
-A real-time multiplayer drawing and guessing game built with React, Node.js, and Socket.IO.
+<div align="center">
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:ff6b6b,25:ffd93d,50:6bcb77,75:4d96ff,100:c77dff&height=220&section=header&text=✏️%20Scribbl&fontSize=90&fontColor=ffffff&animation=fadeIn&fontAlignY=40&desc=draw%20%7C%20guess%20%7C%20win&descAlignY=62&descColor=ffffff&descSize=22"/>
+
+<!-- Doodle divider -->
+<h3>🎨 &nbsp; Draw &nbsp;·&nbsp; Guess &nbsp;·&nbsp; Win &nbsp; 🏆</h3>
+<p><i>A real-time multiplayer drawing game built with React + Socket.IO</i></p>
+
+<br/>
+
+<p>
+  <a href="https://scribbl-clone-mnag.onrender.com">
+    <img src="https://img.shields.io/badge/🎮%20Play%20Now-Live%20Game-ff6b6b?style=for-the-badge" alt="Play Now"/>
+  </a>
+</p>
+
+<p>
+  <img src="https://img.shields.io/badge/React-Vite-61DAFB?style=flat&logo=react&logoColor=black"/>
+  <img src="https://img.shields.io/badge/Socket.IO-Real--time-010101?style=flat&logo=socketdotio&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Node.js-18-339933?style=flat&logo=nodedotjs&logoColor=white"/>
+  <img src="https://img.shields.io/badge/MongoDB-Mongoose-47A248?style=flat&logo=mongodb&logoColor=white"/>
+  <img src="https://img.shields.io/badge/license-ISC-blue?style=flat"/>
+</p>
+
+</div>
 
 ---
 
-## 🚀 Features
+```
+ ╔═══════════════════════════════════════════════════════════╗
+ ║  ✏️  draw something...  💬  others guess...  🏆  win!    ║
+ ╚═══════════════════════════════════════════════════════════╝
+```
 
-- 🏠 **Private Rooms** — Create or join rooms with a shareable invite link
-- 🎨 **Real-time Canvas** — HTML5 canvas with live stroke streaming via WebSockets
-- 🖌️ **Drawing Tools** — Color palette, brush size slider, eraser, and clear canvas
-- 💬 **Live Chat & Guessing** — Type guesses in real-time, wrong guesses show in chat
-- ⏱️ **Server-controlled Timer** — Countdown synced across all clients
-- 🔄 **Turn Rotation** — Each player draws for the full number of rounds before passing
-- 📝 **Word Selection** — Drawer picks from 3 random word options (auto-picks after 15s)
-- 🏆 **Points System** — Time-based scoring, faster guesses earn more points (max 500)
-- 👥 **Live Leaderboard** — Player scores update in real-time as correct guesses come in
-- 🔁 **Reconnect Support** — Players can reload without losing their game state
-- 🎭 **Avatar Picker** — Choose a custom avatar before joining
+**Scribbl** is a full-stack clone of [skribbl.io](https://skribbl.io) — a real-time multiplayer drawing and guessing game. Create a private room, invite your friends, pick a word, and draw it before the timer runs out. Built from scratch with WebSockets, HTML5 Canvas, and a server-controlled game engine.
+
+---
+
+## ✏️ Features
+
+```
+ ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+ │  🏠 Private     │  │  🎨 Real-time   │  │  🖌️ Drawing    │
+ │     Rooms       │  │     Canvas      │  │     Tools       │
+ │                 │  │                 │  │                 │
+ │ Create & share  │  │ Live stroke     │  │ Color palette   │
+ │ invite links    │  │ streaming via   │  │ Brush sizes     │
+ │ instantly       │  │ WebSockets      │  │ Eraser & clear  │
+ └─────────────────┘  └─────────────────┘  └─────────────────┘
+
+ ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+ │  💬 Live Chat   │  │  ⏱️ Server      │  │  🏆 Scoring    │
+ │   & Guessing    │  │     Timer       │  │    System       │
+ │                 │  │                 │  │                 │
+ │ Type guesses    │  │ Countdown synced│  │ Faster = more   │
+ │ in real-time    │  │ across ALL      │  │ points. Max     │
+ │ wrong = chat    │  │ clients         │  │ 500 pts/round   │
+ └─────────────────┘  └─────────────────┘  └─────────────────┘
+
+ ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+ │  📝 Word        │  │  👥 Live        │  │  🔁 Reconnect  │
+ │   Selection     │  │  Leaderboard    │  │    Support      │
+ │                 │  │                 │  │                 │
+ │ Pick from 3     │  │ Scores update   │  │ Reload without  │
+ │ options. Auto   │  │ instantly on    │  │ losing your     │
+ │ picks after 15s │  │ correct guess   │  │ game state      │
+ └─────────────────┘  └─────────────────┘  └─────────────────┘
+```
+
+---
+
+## 🎮 How to Play
+
+```
+  1. ✍️  Enter your name + pick an avatar
+         ↓
+  2. 🏠  Create a Private Room
+         ↓
+  3. 🔗  Share the invite link with friends
+         ↓
+  4. ⚙️  Host configures: players · draw time · rounds
+         ↓
+  5. 🚀  Host clicks START
+         ↓
+  6. 📝  Drawer picks a word from 3 options
+         ↓
+  7. 🎨  Draw it on the canvas!
+         ↓
+  8. 💬  Others type guesses in chat
+         ↓
+  9. ⚡  Faster correct guess = more points
+         ↓
+  10. 🏆  Highest score wins!
+```
+
+---
+
+## 🧠 Scoring Formula
+
+```
+╔════════════════════════════════════════════╗
+║                                            ║
+║   points = max( 50, timeLeft/drawTime×500) ║
+║                                            ║
+║   45s left on 50s timer  →  450 pts  🔥   ║
+║   25s left on 50s timer  →  250 pts  ⚡   ║
+║    5s left on 50s timer  →   50 pts  😅   ║
+║                                            ║
+╚════════════════════════════════════════════╝
+```
+
+---
+
+## 🔌 Socket Events
+
+| Event | Direction | What it does |
+|-------|-----------|-------------|
+| `join-room` | Client → Server | Join with player profile |
+| `room-update` | Server → Client | Broadcast players & game state |
+| `start-game` | Client → Server | Host fires the starting gun |
+| `word-options` | Server → Drawer | Here are your 3 word choices |
+| `select-word` | Client → Server | Drawer picks one |
+| `drawing-started` | Server → Client | Masked word sent to guessers |
+| `draw-stroke` | Client ↔ Server | Every stroke streamed live |
+| `clear-canvas` | Client ↔ Server | Wipe the board |
+| `submit-guess` | Client → Server | Player's guess submitted |
+| `player-guessed` | Server → Client | Correct! Points awarded |
+| `chat-message` | Server → Client | Wrong guess in chat |
+| `timer-tick` | Server → Client | Tick tock ⏱️ |
+| `turn-ended` | Server → Client | Reveal the word |
+| `game-over` | Server → Client | Final scores 🏆 |
 
 ---
 
 ## 🛠️ Tech Stack
 
-**Frontend**
-- React (Vite)
-- Tailwind CSS
-- Socket.IO Client
-- React Router
-
-**Backend**
-- Node.js + Express
-- Socket.IO
-- MongoDB + Mongoose
-- UUID
+| Layer | Technology |
+|-------|-----------|
+| **Frontend** | React · Vite · Tailwind CSS |
+| **Real-time** | Socket.IO Client + Server |
+| **Backend** | Node.js · Express |
+| **Database** | MongoDB · Mongoose |
+| **State** | In-memory room store + MongoDB |
+| **Routing** | React Router |
+| **Deploy** | Render |
 
 ---
 
 ## 📁 Project Structure
 
 ```
-scribbl/
-├── client/                  # React frontend
-│   ├── src/
-│   │   ├── Components/
-│   │   │   ├── Canvas.jsx       # Drawing canvas with toolbar
-│   │   │   ├── PlayerList.jsx   # Live leaderboard
-│   │   │   ├── JoinGate.jsx     # Join room modal
-│   │   │   ├── Settings.jsx     # Game settings panel
-│   │   │   └── Avatar.jsx       # Avatar picker
-│   │   ├── Pages/
-│   │   │   ├── LandingPage.jsx  # Home page
-│   │   │   └── Private.jsx      # Game room page
-│   │   └── socket.js            # Socket.IO client instance
+Scribbl-clone/
+├── Client/
+│   └── src/
+│       ├── Components/
+│       │   ├── Canvas.jsx        ← 🎨 Drawing canvas + toolbar
+│       │   ├── PlayerList.jsx    ← 👥 Live leaderboard
+│       │   ├── JoinGate.jsx      ← 🚪 Join room modal
+│       │   ├── Settings.jsx      ← ⚙️  Game settings panel
+│       │   └── Avatar.jsx        ← 🎭 Avatar picker
+│       ├── Pages/
+│       │   ├── LandingPage.jsx   ← 🏠 Home
+│       │   └── Private.jsx       ← 🎮 Game room
+│       └── socket.js             ← ⚡ Socket.IO instance
 │
-├── server/                  # Node.js backend
-│   ├── Memory/
-│   │   └── roomstore.js         # In-memory room state
-│   ├── models/
-│   │   └── RoomSchema.js        # MongoDB room model
-│   ├── routes/
-│   │   └── roomRoutes.js        # REST API routes
-│   ├── controllers/
-│   │   └── roomController.js    # Room creation logic
-│   ├── socket/
-│   │   ├── index.js             # Socket.IO initialization
-│   │   ├── roomEvents.js        # Join/disconnect handlers
-│   │   └── gameEvents.js        # Game logic & timer
-│   └── server.js                # Entry point
+└── Server/
+    ├── Memory/
+    │   └── roomstore.js          ← 🧠 In-memory game state
+    ├── models/
+    │   └── RoomSchema.js         ← 🗄️  MongoDB schema
+    ├── routes/
+    │   └── roomRoutes.js         ← 🛣️  REST API
+    ├── controllers/
+    │   └── roomController.js     ← 🎛️  Room logic
+    ├── socket/
+    │   ├── index.js              ← 🔌 Socket init
+    │   ├── roomEvents.js         ← 🚪 Join/disconnect
+    │   └── gameEvents.js         ← 🎮 Game logic & timer
+    └── server.js                 ← 🚀 Entry point
 ```
 
 ---
 
-## ⚙️ Installation
+## ⚙️ Getting Started
 
 ### Prerequisites
 - Node.js v18+
 - MongoDB
 
-### Clone the repo
+### Clone
 
 ```bash
-git clone https://github.com/yourusername/scribbl.git
-cd scribbl
+git clone https://github.com/alamrumman/Scribbl-clone.git
+cd Scribbl-clone
 ```
 
-### Setup Backend
+### Backend
 
 ```bash
-cd server
+cd Server
 npm install
 ```
 
-Create a `.env` file:
+Create `.env`:
 
 ```env
 PORT=5000
@@ -99,81 +209,38 @@ MONGO_URI=your_mongodb_connection_string
 FRONTEND_URL=http://localhost:5173
 ```
 
-Start the server:
-
 ```bash
 npm run dev
 ```
 
-### Setup Frontend
+### Frontend
 
 ```bash
-cd client
+cd Client
 npm install
 ```
 
-Create a `.env` file:
+Create `.env`:
 
 ```env
 VITE_BACKEND_URL=http://localhost:5000
 ```
 
-Start the frontend:
-
 ```bash
 npm run dev
 ```
 
 ---
 
-## 🎮 How to Play
+<div align="center">
 
-1. Enter your name and pick an avatar on the landing page
-2. Click **Create Private Room** to start a new room
-3. Share the invite link with friends
-4. The host configures settings (players, draw time, rounds, word count)
-5. Host clicks **Start** to begin the game
-6. The drawer picks a word from 3 options
-7. Guessers type in the chat to guess the word
-8. Faster correct guesses earn more points
-9. Each player takes turns drawing for the full number of rounds
-10. Highest score at the end wins 🏆
+## 👨‍💻 Author
 
----
+**Md Rumman Alam**
 
-## 🔌 Socket Events
 
-| Event | Direction | Description |
-|-------|-----------|-------------|
-| `join-room` | Client → Server | Join a room with player profile |
-| `room-update` | Server → Client | Broadcast player list and game state |
-| `start-game` | Client → Server | Host starts the game |
-| `word-options` | Server → Drawer | Send 3 word choices |
-| `select-word` | Client → Server | Drawer picks a word |
-| `your-word` | Server → Drawer | Confirm selected word |
-| `drawing-started` | Server → Client | Send masked word to guessers |
-| `draw-stroke` | Client ↔ Server | Stream canvas strokes in real-time |
-| `clear-canvas` | Client ↔ Server | Clear the canvas |
-| `submit-guess` | Client → Server | Player submits a guess |
-| `player-guessed` | Server → Client | Correct guess notification + points |
-| `chat-message` | Server → Client | Wrong guess shown in chat |
-| `timer-tick` | Server → Client | Countdown every second |
-| `turn-ended` | Server → Client | Reveal correct word |
-| `game-over` | Server → Client | Final scores |
+<br/>
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:c77dff,25:4d96ff,50:6bcb77,75:ffd93d,100:ff6b6b&height=120&section=footer&animation=fadeIn"/>
 
-## 🧠 Scoring
-
-Points are calculated based on how quickly a player guesses the word:
-
-```
-points = max(50, (timeLeft / drawTime) * 500)
-```
-
-- Guess with 45s left on a 50s timer → **450 pts**
-- Guess with 5s left → **50 pts** (minimum)
-- If all players guess correctly, the turn ends early
-
----
-
+</div>
