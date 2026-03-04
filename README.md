@@ -49,7 +49,7 @@
  └─────────────────┘  └─────────────────┘  └─────────────────┘
 
  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
- │  💬 Live Chat   │  │  ⏱️ Server      │  │  🏆 Scoring    │
+ │  💬 Live Chat   │  │  ⏱️ Server      │ │ 🏆 Scoring      │
  │   & Guessing    │  │     Timer       │  │    System       │
  │                 │  │                 │  │                 │
  │ Type guesses    │  │ Countdown synced│  │ Faster = more   │
@@ -231,6 +231,17 @@ npm run dev
 ```
 
 ---
+
+## 〔 Roadmap 〕
+- [ ] Redis integration for fault-tolerant room state — persists room data 
+      and stroke history across server crashes, enabling horizontal scaling 
+      across multiple server instances
+- [ ] Unit and integration testing with Jest — covering game logic, room 
+      lifecycle, and Socket.io event handlers
+- [ ] CI/CD pipeline via GitHub Actions — runs test suite on every push 
+      and deploys to Render via webhook only if all tests pass
+---
+
 
 <div align="center">
 
