@@ -171,19 +171,19 @@ function advanceTurn(io, roomCode) {
 function registerGameevents(io, socket) {
   console.log("🎮 Game events registered for socket:", socket.id);
 
-  socket.on("start-game", ({ roomCode, settings }) => {
+  socket.on("start-game", ({ roomCode, settings }, callback) => {
     console.log("🚀 start-game received");
 
     const room = rooms.get(roomCode);
-    if (!room) return;
+    if (!room) return callback?.({ success: false, message: "Room not found" });
 
     const hostPlayer = room.players.find((p) => p.role === "host");
     if (!hostPlayer)
-      return res.status(400).json({ message: "Only Host can start the game" });
+      return callback?.({ success: false, message: "No host found" });
 
     if (hostPlayer.socketId !== socket.id) {
-      console.log("⛔ Not host. Start denied.");
-      return;
+       return callback?.({ success: false, message: "Only host can start the game" });
+      
     }
 
     console.log("👑 Host verified. Starting game...");
@@ -197,16 +197,16 @@ function registerGameevents(io, socket) {
   });
 
   socket.on("clear-canvas", ({ roomCode }) => {
-  const room = rooms.get(roomCode);
-  if (!room) return;
+    const room = rooms.get(roomCode);
+    if (!room) return;
 
-  // Only drawer can clear
-  const drawer = room.players.find((p) => p.id === room.currentDrawerId);
-  if (drawer?.socketId !== socket.id) return;
+    // Only drawer can clear
+    const drawer = room.players.find((p) => p.id === room.currentDrawerId);
+    if (drawer?.socketId !== socket.id) return;
 
-  // Broadcast to everyone except drawer (drawer already cleared locally)
-  socket.to(roomCode).emit("clear-canvas");
-});
+    // Broadcast to everyone except drawer (drawer already cleared locally)
+    socket.to(roomCode).emit("clear-canvas");
+  });
 
   socket.on("select-word", ({ roomCode, word }) => {
     const room = rooms.get(roomCode);
