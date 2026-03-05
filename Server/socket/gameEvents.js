@@ -110,6 +110,15 @@ function handleWordSelected(io, roomCode, word) {
     }
   }, 1000);
 }
+function endGame(io, roomCode) {
+  const room = rooms.get(roomCode);
+  if (!room) return;
+
+  room.status = "finished";
+  const sorted = [...room.players].sort((a, b) => b.score - a.score);
+  io.to(roomCode).emit("game-over", { players: sorted });
+  console.log("🏆 Game over!");
+}
 
 function endTurn(io, roomCode) {
   const room = rooms.get(roomCode);
@@ -150,10 +159,7 @@ function advanceTurn(io, roomCode) {
 
     // ✅ All players have drawn — game over
     if (nextIndex >= room.players.length) {
-      room.status = "finished";
-      const sorted = [...room.players].sort((a, b) => b.score - a.score);
-      io.to(roomCode).emit("game-over", { players: sorted });
-      console.log("🏆 Game over!");
+      endGame(io, roomCode); // ✅
       return;
     }
 
@@ -168,6 +174,7 @@ function advanceTurn(io, roomCode) {
   );
   startDrawingTurn(io, roomCode);
 }
+
 function registerGameevents(io, socket) {
   console.log("🎮 Game events registered for socket:", socket.id);
 
@@ -182,8 +189,10 @@ function registerGameevents(io, socket) {
       return callback?.({ success: false, message: "No host found" });
 
     if (hostPlayer.socketId !== socket.id) {
-       return callback?.({ success: false, message: "Only host can start the game" });
-      
+      return callback?.({
+        success: false,
+        message: "Only host can start the game",
+      });
     }
 
     console.log("👑 Host verified. Starting game...");
@@ -285,4 +294,4 @@ function registerGameevents(io, socket) {
   });
 }
 
-module.exports = registerGameevents;
+module.exports = { registerGameevents, endTurn, endGame };

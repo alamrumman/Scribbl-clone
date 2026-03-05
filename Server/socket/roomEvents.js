@@ -1,5 +1,7 @@
 const rooms = require("../Memory/roomstore");
 const { v4: uuidv4 } = require("uuid");
+const { endTurn, endGame } = require("./gameEvents");
+
 function registerRoomEvents(io, socket) {
   socket.on("join-room", ({ roomCode, player }, callback) => {
     const room = rooms.get(roomCode);
@@ -35,6 +37,7 @@ function registerRoomEvents(io, socket) {
     }
 
     socket.join(roomCode);
+    socket.data.roomCode = roomCode; //attaching room code along with join for handling disconnect properly
 
     io.to(roomCode).emit("room-update", {
       players: room.players,
@@ -45,16 +48,49 @@ function registerRoomEvents(io, socket) {
   });
 
   socket.on("disconnect", () => {
-    rooms.forEach((room, roomCode) => {
-      // ✅ Remove player safely
-      room.players = room.players.filter((p) => p.socketId !== socket.id);
+    // rather than looping we directly find the room to which the user belongs throught socket.join.roomdata = roomdata which is attached to join-game
 
-      io.to(roomCode).emit("room-update", {
-        players: room.players,
-        status: room.status,
-        currentDrawerId: room.currentDrawerId ?? null, // ✅ add this
-        currentRound: room.currentRound ?? null,
-      });
+    const roomCode = socket.data.roomCode; // ✅ O(1) lookup
+    if (!roomCode) return;
+
+    const room = rooms.get(roomCode); // finds the room without looping over all rooms
+    if (!room) return;
+
+    // ✅ find who left before removing them
+    const leavingPlayer = room.players.find((p) => p.socketId === socket.id);
+
+    // ✅ if drawer left mid-game, end the turn
+    if (room.status === "live" && leavingPlayer?.id === room.currentDrawerId) {
+      const currentIndex = room.players.findIndex(
+        (p) => p.id === leavingPlayer.id,
+      );
+      const nextIndex = currentIndex + 1;
+
+      if (nextIndex >= room.players.length-1) {
+        endGame(io, roomCode); // ✅ reusing endGame
+        return;
+      }
+
+      room.currentDrawerId = room.players[nextIndex].id;
+      room.currentRound = 0;
+      endTurn(io, roomCode);
+    }
+
+    // ✅now we remove them with the help of filter
+    room.players = room.players.filter((p) => p.socketId !== socket.id);
+
+    // ✅ if host left lobby, assign new host
+    if (room.status === "waiting" && leavingPlayer?.role === "host") {
+      if (room.players.length > 0) {
+        room.players[0].role = "host"; // first remaining player becomes host
+      }
+    }
+    // ✅ only emit to the one room
+    io.to(roomCode).emit("room-update", {
+      players: room.players,
+      status: room.status,
+      currentDrawerId: room.currentDrawerId ?? null,
+      currentRound: room.currentRound ?? null,
     });
   });
 }

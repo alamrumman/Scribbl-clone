@@ -1,6 +1,6 @@
 const { Server } = require("socket.io");
 const registerRoomEvents = require("./roomEvents");
-const registerGameevents = require("./gameEvents");
+const { registerGameevents } = require("./gameEvents");
 const rooms = require("../Memory/roomstore");
 function initSocket(server) {
   const io = new Server(server, {
