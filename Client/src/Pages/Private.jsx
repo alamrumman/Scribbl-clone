@@ -23,9 +23,8 @@ function Private() {
     rounds: 3,
     wordCount: 3,
   });
-  const [startError, setStartError] = useState(null);
 
-  const { showJoinGate, setShowJoinGate } = useRoom(roomCode);
+  const { showJoinGate, setShowJoinGate, roomError } = useRoom(roomCode);
 
   const {
     players,
@@ -58,7 +57,13 @@ function Private() {
       }
     });
   };
-
+  if (roomError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-red-500 text-xl font-bold">{roomError}</p>
+      </div>
+    );
+  }
   return (
     <div
       className="min-h-screen"
@@ -145,7 +150,7 @@ function Private() {
                 (e.currentTarget.style.cssText +=
                   "transform:translate(0,0);box-shadow:3px 3px 0px #1a1a1a")
               }
-              onClick={() => socket.emit("start-game", { roomCode, settings })}
+              onClick={handleStartGame}
             >
               🚀 Start Game
             </button>

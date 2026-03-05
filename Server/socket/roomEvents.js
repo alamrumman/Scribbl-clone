@@ -39,6 +39,23 @@ function registerRoomEvents(io, socket) {
     socket.join(roomCode);
     socket.data.roomCode = roomCode; //attaching room code along with join for handling disconnect properly
 
+    if (room.status === "live") {
+      const maskedWord = room.currentWord
+        ?.split("")
+        .map((c) => (c === " " ? " " : "_"))
+        .join(" ");
+
+      socket.emit("game-state-restore", {
+        status: room.status,
+        currentDrawerId: room.currentDrawerId,
+        currentRound: room.currentRound,
+        timeLeft: room.currentTimeLeft,
+        maskedWord: maskedWord ?? "",
+        yourWord:
+          existing?.id === room.currentDrawerId ? room.currentWord : null,
+      });
+    }
+
     io.to(roomCode).emit("room-update", {
       players: room.players,
       status: room.status,
@@ -66,7 +83,7 @@ function registerRoomEvents(io, socket) {
       );
       const nextIndex = currentIndex + 1;
 
-      if (nextIndex >= room.players.length-1) {
+      if (nextIndex >= room.players.length - 1) {
         endGame(io, roomCode); // ✅ reusing endGame
         return;
       }

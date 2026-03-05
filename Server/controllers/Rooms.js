@@ -63,31 +63,7 @@ exports.createRoom = async (req, res) => {
     res.status(500).json({ message: "Error creating room" });
   }
 };
-exports.joinRoom = async (req, res) => {
-  try {
-    const { roomCode, username } = req.body;
 
-    const roomDoc = await Room.findOne({ roomCode });
-
-    if (!roomDoc || roomDoc.status !== "waiting") {
-      return res.status(404).json({
-        message: "Room not available",
-      });
-    }
-
-    if (roomDoc.playersCount >= 2) {
-      return res.status(400).json({
-        message: "Room full",
-      });
-    }
-
-    return res.json({
-      success: true,
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Join failed" });
-  }
-};
 
 exports.getRoomState = (req, res) => {
   const { roomCode } = req.params;
@@ -106,7 +82,6 @@ exports.getRoomState = (req, res) => {
     currentRound: room.currentRound,
     currentDrawerId: room.currentDrawerId,
     drawerIndex: room.drawerIndex,
-    word: room.word,
     settings: room.settings,
   });
 };

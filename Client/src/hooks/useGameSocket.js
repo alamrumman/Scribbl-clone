@@ -55,6 +55,16 @@ export function useGameSocket() {
       setStatus("finished");
       setPlayers(players);
     });
+    socket.on("game-state-restore", (data) => {
+      setStatus(data.status);
+      setCurrentDrawerId(data.currentDrawerId);
+      setCurrentRound(data.currentRound);
+      setTimeLeft(data.timeLeft);
+      setMaskedWord(data.maskedWord);
+      if (data.yourWord) setYourWord(data.yourWord);
+    });
+
+    // in cleanup
 
     return () => {
       socket.off("room-update", handleRoomUpdate);
@@ -66,6 +76,7 @@ export function useGameSocket() {
       socket.off("player-guessed");
       socket.off("chat-message");
       socket.off("game-over");
+      socket.off("game-state-restore");
     };
   }, []);
 
