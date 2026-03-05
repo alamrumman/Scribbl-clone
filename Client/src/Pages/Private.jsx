@@ -23,6 +23,7 @@ function Private() {
     rounds: 3,
     wordCount: 3,
   });
+  const [startError, setStartError] = useState(null);
 
   const { showJoinGate, setShowJoinGate } = useRoom(roomCode);
 
@@ -38,6 +39,7 @@ function Private() {
     correctWord,
     chatMessages,
     isDrawer,
+    isHost,
   } = useGameSocket();
 
   const handleCopyLink = async () => {
@@ -48,6 +50,13 @@ function Private() {
     } catch (err) {
       toast.error(err.message);
     }
+  };
+  const handleStartGame = () => {
+    socket.emit("start-game", { roomCode, settings }, (response) => {
+      if (!response?.success) {
+        toast.error(response?.message || "Failed to start game"); // ✅ you already have toast imported
+      }
+    });
   };
 
   return (
@@ -97,6 +106,7 @@ function Private() {
       {status === "finished" && <GameOver players={players} />}
 
       {/* Start + Copy */}
+
       {status === "waiting" && (
         <div
           style={{
@@ -110,34 +120,52 @@ function Private() {
             margin: "4px",
           }}
         >
-          <button
-            style={{
-              flex: 7,
-              padding: "10px 12px",
-              background: "#84cc16",
-              color: "#1a1a1a",
-              border: "2px solid #1a1a1a",
-              borderRadius: "6px",
-              fontSize: "16px",
-              fontWeight: "700",
+          {isHost ? (
+            <button
+              style={{
+                flex: 7,
+                padding: "10px 12px",
+                background: "#84cc16",
+                color: "#1a1a1a",
+                border: "2px solid #1a1a1a",
+                borderRadius: "6px",
+                fontSize: "16px",
+                fontWeight: "700",
 
-              cursor: "pointer",
-              boxShadow: "3px 3px 0px #1a1a1a",
-              letterSpacing: "0.5px",
-              transition: "all 0.1s ease",
-            }}
-            onMouseDown={(e) =>
-              (e.currentTarget.style.cssText +=
-                "transform:translate(2px,2px);box-shadow:1px 1px 0px #1a1a1a")
-            }
-            onMouseUp={(e) =>
-              (e.currentTarget.style.cssText +=
-                "transform:translate(0,0);box-shadow:3px 3px 0px #1a1a1a")
-            }
-            onClick={() => socket.emit("start-game", { roomCode, settings })}
-          >
-            🚀 Start Game
-          </button>
+                cursor: "pointer",
+                boxShadow: "3px 3px 0px #1a1a1a",
+                letterSpacing: "0.5px",
+                transition: "all 0.1s ease",
+              }}
+              onMouseDown={(e) =>
+                (e.currentTarget.style.cssText +=
+                  "transform:translate(2px,2px);box-shadow:1px 1px 0px #1a1a1a")
+              }
+              onMouseUp={(e) =>
+                (e.currentTarget.style.cssText +=
+                  "transform:translate(0,0);box-shadow:3px 3px 0px #1a1a1a")
+              }
+              onClick={() => socket.emit("start-game", { roomCode, settings })}
+            >
+              🚀 Start Game
+            </button>
+          ) : (
+            <div
+              style={{
+                flex: 7,
+                padding: "10px 12px",
+                background: "#f3f4f6",
+                color: "#9ca3af",
+                border: "2px solid #1a1a1a",
+                borderRadius: "6px",
+                fontSize: "14px",
+                fontWeight: "600",
+                textAlign: "center",
+              }}
+            >
+              ⏳ Waiting for host to start...
+            </div>
+          )}
           <button
             style={{
               flex: 3,

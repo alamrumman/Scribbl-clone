@@ -71,6 +71,7 @@ export function useGameSocket() {
 
   const myPlayer = players.find((p) => p.socketId === socket.id);
   const isDrawer = myPlayer?.id === currentDrawerId;
+  const isHost = myPlayer?.role === "host";
 
   return {
     players,
@@ -85,5 +86,6 @@ export function useGameSocket() {
     correctWord,
     chatMessages,
     isDrawer,
+    isHost,
   };
 }
