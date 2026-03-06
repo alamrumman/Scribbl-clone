@@ -138,6 +138,7 @@ function clearRoomTimers(room) {
   room.drawTimer = null;
   room.wordPickTimeout = null;
   room.nextTurnTimeout = null;
+  room.selectionTimer = null;
 }
 
 function startDrawingTurn(io, roomCode) {
