@@ -133,6 +133,7 @@ function getRandomWords(count) {
 
 function clearRoomTimers(room) {
   if (room.drawTimer) clearInterval(room.drawTimer);
+  if (room.selectionTimer) clearInterval(room.selectionTimer);
   if (room.wordPickTimeout) clearTimeout(room.wordPickTimeout);
   if (room.nextTurnTimeout) clearTimeout(room.nextTurnTimeout);
   room.drawTimer = null;

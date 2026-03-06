@@ -31,6 +31,7 @@ export function useGameSocket() {
       setCorrectWord("");
       setWordOptions([]);
       setDrawerSelectingMsg(null);
+      setTimeLeft(null);
     });
 
     socket.on("your-word", (word) => setYourWord(word));
@@ -57,7 +58,6 @@ export function useGameSocket() {
 
     socket.on("drawer-selecting", ({ username }) => {
       setDrawerSelectingMsg(`${username} is selecting a word...`);
-    
     });
 
     socket.on("game-over", ({ players }) => {
