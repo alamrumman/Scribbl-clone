@@ -163,7 +163,14 @@ function startDrawingTurn(io, roomCode) {
     currentDrawerId: room.currentDrawerId,
     currentRound: room.currentRound,
   });
-
+  io.to(roomCode).emit("drawer-selecting", { username: drawer.username });
+  io.to(roomCode).emit("timer-tick", { timeLeft: 15 });
+  let selectionTime = 14;
+  room.selectionTimer = setInterval(() => {
+    io.to(roomCode).emit("timer-tick", { timeLeft: selectionTime });
+    selectionTime--;
+    if (selectionTime < 0) clearInterval(room.selectionTimer);
+  }, 1000);
   // Send word options only to drawer
   const wordOptions = getRandomWords(room.settings.wordCount);
   room.pendingWords = wordOptions;
@@ -218,7 +225,7 @@ function handleWordSelected(io, roomCode, word) {
 function endGame(io, roomCode) {
   const room = rooms.get(roomCode);
   if (!room) return;
-
+  clearRoomTimers(room);
   room.status = "finished";
   const sorted = [...room.players].sort((a, b) => b.score - a.score);
   io.to(roomCode).emit("game-over", { players: sorted });

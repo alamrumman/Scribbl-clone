@@ -12,6 +12,7 @@ export function useGameSocket() {
   const [yourWord, setYourWord] = useState("");
   const [correctWord, setCorrectWord] = useState("");
   const [chatMessages, setChatMessages] = useState([]);
+  const [drawerSelectingMsg, setDrawerSelectingMsg] = useState("");
 
   useEffect(() => {
     const handleRoomUpdate = (data) => {
@@ -29,6 +30,7 @@ export function useGameSocket() {
       setMaskedWord(maskedWord);
       setCorrectWord("");
       setWordOptions([]);
+      setDrawerSelectingMsg(null);
     });
 
     socket.on("your-word", (word) => setYourWord(word));
@@ -37,6 +39,8 @@ export function useGameSocket() {
       setCorrectWord(correctWord);
       setYourWord("");
       setMaskedWord("");
+      setDrawerSelectingMsg("");
+      setTimeLeft(null);
     });
 
     socket.on("player-guessed", ({ username, points, players }) => {
@@ -49,6 +53,11 @@ export function useGameSocket() {
 
     socket.on("chat-message", ({ username, message }) => {
       setChatMessages((prev) => [...prev, { username, message }]);
+    });
+
+    socket.on("drawer-selecting", ({ username }) => {
+      setDrawerSelectingMsg(`${username} is selecting a word...`);
+    
     });
 
     socket.on("game-over", ({ players }) => {
@@ -77,6 +86,7 @@ export function useGameSocket() {
       socket.off("chat-message");
       socket.off("game-over");
       socket.off("game-state-restore");
+      socket.off("drawer-selecting");
     };
   }, []);
 
@@ -98,5 +108,6 @@ export function useGameSocket() {
     chatMessages,
     isDrawer,
     isHost,
+    drawerSelectingMsg,
   };
 }

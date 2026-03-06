@@ -78,20 +78,27 @@ function registerRoomEvents(io, socket) {
 
     // ✅ if drawer left mid-game, end the turn
     if (room.status === "live" && leavingPlayer?.id === room.currentDrawerId) {
+      // ✅ Remove them first
+      room.players = room.players.filter((p) => p.socketId !== socket.id);
+
       const currentIndex = room.players.findIndex(
-        (p) => p.id === leavingPlayer.id,
+        (p) => p.id === room.currentDrawerId,
       );
       const nextIndex = currentIndex + 1;
 
-      if (nextIndex >= room.players.length - 1) {
-        endGame(io, roomCode); // ✅ reusing endGame
+      if (nextIndex >= room.players.length) {
+        endGame(io, roomCode);
         return;
       }
 
       room.currentDrawerId = room.players[nextIndex].id;
       room.currentRound = 0;
       endTurn(io, roomCode);
+      return; // ✅ don't fall through to the filter below
     }
+
+    // ✅ Remove non-drawer players here
+    room.players = room.players.filter((p) => p.socketId !== socket.id);
 
     // ✅now we remove them with the help of filter
     room.players = room.players.filter((p) => p.socketId !== socket.id);

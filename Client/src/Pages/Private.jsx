@@ -39,6 +39,7 @@ function Private() {
     chatMessages,
     isDrawer,
     isHost,
+    drawerSelectingMsg,
   } = useGameSocket();
 
   const handleCopyLink = async () => {
@@ -80,6 +81,12 @@ function Private() {
         status={status}
         roomCode={roomCode}
       />
+
+      {drawerSelectingMsg && (
+        <p className="text-center text-lg font-bold py-2 bg-white">
+          {drawerSelectingMsg}
+        </p>
+      )}
 
       {showJoinGate && (
         <JoinGate
