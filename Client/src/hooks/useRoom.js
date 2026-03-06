@@ -9,7 +9,7 @@ export function useRoom(roomCode) {
   useEffect(() => {
     if (!roomCode) return;
 
-    fetch(`${BASE_URL}/api/rooms/${roomCode}`)
+    fetch(`http://localhost:5000/api/rooms/${roomCode}`)
       .then((res) => res.json())
       .then((data) => {
         if (!data || data.message === "Room not found") {

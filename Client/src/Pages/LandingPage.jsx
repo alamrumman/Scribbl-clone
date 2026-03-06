@@ -23,7 +23,7 @@ function LandingPage() {
     setLoading(true);
     setShowSpinner(true);
     try {
-      const res = await fetch(`${BASE_URL}/api/rooms/create`, {
+      const res = await fetch(`http://localhost:5000/api/rooms/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -56,6 +56,8 @@ function LandingPage() {
       navigate(`/room-code?code=${data.roomCode}`);
     } catch (error) {
       toast.error(error.message);
+      setLoading(false);
+      setShowSpinner(false);
     }
   };
 

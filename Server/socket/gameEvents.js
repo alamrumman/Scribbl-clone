@@ -190,7 +190,7 @@ function handleWordSelected(io, roomCode, word) {
   const room = rooms.get(roomCode);
   if (!room) return;
 
-  clearTimeout(room.wordPickTimeout);
+  clearRoomTimers(room);
   room.currentWord = word;
   room.wordSelected = true;
 
